@@ -1,0 +1,51 @@
+#include<graphics.h>
+#include<conio.h>
+
+void init(void);
+void gamebegin(void);
+void gameplay(void);
+void close(void);
+
+void main()
+{
+  init();
+  gamebegin();
+  gameplay();
+  close();
+}
+
+void init()
+{
+  initgraph(1000,700);
+}
+
+void gamebegin()
+{
+	//绘制边框
+	setlinecolor(RGB(50,50,50));
+	setlinestyle(PS_SOLID, 10);
+	rectangle(255,45,745,655);
+	//绘制小球		
+	setlinestyle(PS_SOLID);
+    setlinecolor(RGB(255,0,0));
+	setlinestyle(RGB(255,0,0));
+	for(int x=280;x<740;x+=40)
+	{
+		for(int y=70;y<650;y+=40)
+		{
+			fillcircle(x,y,18);
+		}
+	}
+
+
+}
+void gameplay()
+{
+
+}
+
+void close()
+{
+  getch();
+  closegraph();
+}
