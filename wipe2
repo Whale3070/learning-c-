@@ -1,0 +1,80 @@
+#include<graphics.h>
+#include<conio.h>
+#include<time.h>
+#include<stdio.h>
+void init(void);
+void gamebegin(void);
+void gameplay(void);
+void drawtime(int);  //重绘时间
+void drawscore(int); //重绘分数
+void close(void);
+
+COLORREF colorArr[6]={RGB(200,0,0),RGB(0,200,0),RGB(0,0,200),
+						RGB(200,200,0),RGB(200,0,200),RGB(0,200,200)};
+
+void main()
+{
+  init();
+  gamebegin();
+  gameplay();
+  close();
+}
+
+void init()
+{
+  initgraph(1000,700);
+}
+
+void gamebegin()
+{
+		//绘制边框
+	setlinecolor(RGB(50,50,50));
+	setlinestyle(PS_SOLID, 10);
+	rectangle(255,45,745,655);
+	//绘制小球		
+	setlinestyle(PS_SOLID);
+	srand((unsigned) time(NULL));  //提供随机数种子
+	for(int x=280;x<740;x+=40)
+	{
+		for(int y=70;y<650;y+=40)
+		{
+			COLORREF cl=colorArr[rand()%6];
+			setlinecolor(cl);
+			setfillcolor(cl);
+			fillcircle(x,y,18);
+		}
+	}
+	//绘制时间
+	drawtime(30);
+	//绘制分数
+	drawscore(0);
+}
+
+void gameplay(void)
+{
+}
+
+
+void drawtime(int sec)
+{
+	char str[30];
+	settextcolor(RGB(255,255,0));
+	settextstyle(25, 0, _T("黑体"));
+	sprintf(str,"剩余时间：%2d s",sec);   
+	outtextxy(30, 50, str);
+}
+
+void drawscore(int score)
+{
+	char str[30];
+	settextcolor(RGB(255,0,0));
+	settextstyle(25, 0, _T("黑体"));
+	sprintf(str,"分数：%d",score);
+	outtextxy(30, 600, str);
+}
+
+void close(void)
+{
+	getch();
+	closegraph();
+}
