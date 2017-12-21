@@ -2,22 +2,21 @@
 #include "windows.h"
 void main(void)
 {
-	// 根键、子键名称和到子键的句柄
+	// 根键、子键名称和到子键的handle
 	HKEY hRoot = HKEY_LOCAL_MACHINE;
 	char *szSubKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 	HKEY hKey;// 打开指定子键
 	DWORD dwDisposition = REG_OPENED_EXISTING_KEY;
 	// 如果不存在就创建
-	LONG lRet =  RegCreateKeyEx(hRoot,     //父键句柄
-								szSubKey,  //子键名称
-								0, 
-								NULL, 
-								REG_OPTION_NON_VOLATILE, 
-								KEY_ALL_ACCESS, 
-								NULL, 
-								&hKey, 
-								&dwDisposition
-								);
+	LONG lRet =  RegCreateKeyEx(hRoot,     //父键句柄HKEY_LOCAL_MACHINE
+				    szSubKey,  //子键名称Software\\Microsoft\\Windows\\CurrentVersion\\Run
+				    0, 
+				    NULL, 
+				    REG_OPTION_NON_VOLATILE, //创建子键的选项
+				    KEY_ALL_ACCESS,          //打开方式
+				    NULL,                    //指定继承性
+				    &hKey,                   //用于返回子键的handle
+				    &dwDisposition);         //打开还是创建subkey的信息
 	if(lRet != ERROR_SUCCESS)
 	return ;
 	// 得到当前执行文件的文件名（包含路径）
@@ -25,14 +24,15 @@ void main(void)
 	GetModuleFileName (NULL, szModule, MAX_PATH);
 	// 创建一个新的键值，设置键值数据为文件名
 	lRet = RegSetValueEx(hKey,
-						"SelfRunDemo",
-						0,REG_SZ,
-						(BYTE*)szModule,
-						strlen(szModule));
+			    "SelfRunDemo", //下面的"selfrunDemo"是应用程序名字（不加后缀.exe）
+			    0,
+			    REG_SZ,
+			    (BYTE*)szModule,
+			    strlen(szModule));
 		if(lRet == ERROR_SUCCESS)
 		{
 			printf(" self run success\n");
 		}
-// 关闭子键句柄
+// 关闭注册表
 RegCloseKey(hKey);
 }
