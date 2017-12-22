@@ -1,0 +1,67 @@
+#include <conio.h>
+#include <iostream>
+#include <windows.h>
+#include <stdio.h>
+using namespace std;
+bool systemShutDown();
+ 
+VOID CALLBACK myxdd(HWND hWnd,UINT nMsg,UINT nIDEvent,DWORD dwTime){
+SYSTEMTIME sys;
+GetLocalTime( &sys );
+	if (sys.wHour == 15)
+		systemShutDown();
+	else 
+		Sleep(60000); 
+}
+ 
+int main(int argc, char* argv[]){
+    MSG Msg;
+	SetTimer(NULL,1,1800000,myxdd);//每隔30minuts运行一次回调函数,该函数的单位是毫秒，30分钟=1800 s = 1800 * 1000 毫秒
+    while(GetMessage(&Msg, NULL, 0, 0)){
+        DispatchMessage(&Msg);
+        if(kbhit()>0)   //当有键盘按下时程序结束
+            break;
+    }
+    KillTimer(NULL,1);
+    return(0);
+}
+
+bool systemShutDown()
+{
+    HANDLE hToken;
+
+    TOKEN_PRIVILEGES tkp;
+
+
+    //获取进程标志
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+        return false;
+
+    }
+    //获取关机特权的LUID
+    LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
+    tkp.PrivilegeCount = 1;
+
+    tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+
+    //获取这个进程的关机特权
+    AdjustTokenPrivileges(hToken, false, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
+    if (GetLastError() != ERROR_SUCCESS) {
+        return false;
+
+    }
+
+
+    // 强制关闭计算机
+    if ( !ExitWindowsEx(EWX_SHUTDOWN | EWX_FORCE, 0)) {
+        return false;
+    }
+    return true;
+/*
+    // 强制重启计算机
+     if ( !ExitWindowsEx(EWX_REBOOT| EWX_FORCE, 0))
+           return false;
+     return true;
+*/
+ } 
